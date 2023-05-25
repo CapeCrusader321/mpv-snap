@@ -58,6 +58,9 @@ parts:
     override-pull: |
       craftctl default
       craftctl set version=$(git describe --tags --abbrev=0 | cut -c 2-)
+    build-snaps:
+      - cmake
+      - ubuntu-make
     build-packages:
       - libavfilter-dev
       - libass-dev
@@ -72,6 +75,7 @@ parts:
       - libcdio++-dev
       - libcdio-dev
       - libcdio-paranoia-dev
+      - libdvdnav-dev
     stage-packages:
       - libavfilter7
       - libva-wayland2
