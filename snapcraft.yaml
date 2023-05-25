@@ -11,7 +11,7 @@ architectures:
 apps:
   mpv:
     command: usr/bin/mpv
-    extension: [gnome]
+    extensions: [gnome]
     common-id: io.mpv.Mpv
     desktop: usr/share/applications/mpv.desktop
     plugs:
