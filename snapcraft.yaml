@@ -69,6 +69,9 @@ parts:
       - libegl1-mesa-dev
       - libva-dev
       - liblua5.2-dev
+      - libcdio++-dev
+      - libcdio-dev
+      - libcdio-paranoia-dev
     stage-packages:
       - libavfilter7
       - libva-wayland2
