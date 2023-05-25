@@ -10,7 +10,7 @@ apps:
     command: usr/bin/mpv
     extension: [gnome]
     common-id: io.mpv.Mpv
-    desktop:
+    desktop: usr/share/applications/mpv.desktop
     plugs:
     - audio-playback
     - home
@@ -23,6 +23,7 @@ parts:
     source: https://github.com/mpv-player/mpv.git
     source-tag: v0.35.1
     after: [ffmpeg]
+    parse-info: [usr/share/metainfo/mpv.metainfo.xml]
     plugin: meson
     meson-parameters:
     - -Dlibmpv=true
