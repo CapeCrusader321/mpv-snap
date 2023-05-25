@@ -31,45 +31,48 @@ parts:
     parse-info: [usr/share/metainfo/mpv.metainfo.xml]
     plugin: meson
     meson-parameters:
-    - -Dlibmpv=true
-    - -Dmanpage-build=disabled
-    - -Dalsa=disabled
-    - -Dcdda=enabled
-    - -Ddvbin=enabled
-    - -Ddvdnav=enabled
-    - -Dlibarchive=enabled
-    - -Dsdl2=enabled
-    - -Dshaderc=enabled
-    - -Dvulkan=enabled
-    - -Dprefix=/usr
-    - -Dbuildtype=release
-    - -Dbuild-date=false
-    - -Dlua=enabled
-    - -Dpulse=enabled
-    - -Ddrm=enabled
-    - -Degl=enabled -Degl-wayland=enabled
-    - -Dwayland=enabled
-    - -Dvaapi-wayland=enabled -Dvaapi-drm=enabled -Dvaapi-x11=enabled -Dvaapi-x-egl=enabled
-    - -Dx11=enabled
+      - -Dlibmpv=true
+      - -Dmanpage-build=disabled
+      - -Dalsa=disabled
+      - -Dcdda=enabled
+      - -Ddvbin=enabled
+      - -Ddvdnav=enabled
+      - -Dlibarchive=enabled
+      - -Dsdl2=enabled
+      - -Dshaderc=enabled
+      - -Dvulkan=enabled
+      - -Dprefix=/usr
+      - -Dbuildtype=release
+      - -Dbuild-date=false
+      - -Dlua=enabled
+      - -Dpulse=enabled
+      - -Ddrm=enabled
+      - -Degl=enabled 
+      - -Degl-wayland=enabled
+      - -Dwayland=enabled
+      - -Dvaapi-wayland=enabled 
+      - -Dvaapi-drm=enabled 
+      - -Dvaapi-x11=enabled 
+      - -Dvaapi-x-egl=enabled
+      - -Dx11=enabled
     override-pull: |
       craftctl default
-      sed '1224s/MPMIN(ver, 4)/MPMIN(ver, 3)/' -i video/out/wayland_common.c
+      craftctl set version=$(git describe --tags --abbrev=0 | cut -c 2-)
     build-packages:
-    - pkg-config
-    - libavfilter-dev
-    - libass-dev
-    - libpulse-dev
-    - libdrm-dev
-    - libwayland-dev
-    - wayland-protocols
-    - libxkbcommon-dev
-    - libegl1-mesa-dev
-    - libva-dev
-    - liblua5.2-dev
+      - libavfilter-dev
+      - libass-dev
+      - libpulse-dev
+      - libdrm-dev
+      - libwayland-dev
+      - wayland-protocols
+      - libxkbcommon-dev
+      - libegl1-mesa-dev
+      - libva-dev
+      - liblua5.2-dev
     stage-packages:
-    - libavfilter7
-    - libva-wayland2
-    - liblua5.2-0
+      - libavfilter7
+      - libva-wayland2
+      - liblua5.2-0
     
   ffmpeg:
     # WORKAROUND:
