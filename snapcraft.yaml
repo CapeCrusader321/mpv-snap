@@ -9,7 +9,7 @@ apps:
   mpv:
     command: usr/bin/mpv
     extension: [gnome]
-    common-id:
+    common-id: io.mpv.Mpv
     desktop:
     plugs:
     - audio-playback
@@ -20,9 +20,21 @@ apps:
 
 parts:
   mpv:
-    source: https://github.com/mpv-player/mpv/archive/v0.35.1.tar.gz
+    source: https://github.com/mpv-player/mpv.git
+    source-tag: v0.35.1
+    after: [ffmpeg]
     plugin: meson
     meson-parameters:
+    - -Dlibmpv=true
+    - -Dmanpage-build=disabled
+    - -Dalsa=disabled
+    - -Dcdda=enabled
+    - -Ddvbin=enabled
+    - -Ddvdnav=enabled
+    - -Dlibarchive=enabled
+    - -Dsdl2=enabled
+    - -Dshaderc=enabled
+    - -Dvulkan=enabled
     - -Dprefix=/usr
     - -Dbuildtype=release
     - -Dbuild-date=false
@@ -53,3 +65,52 @@ parts:
     - libva-wayland2
     - liblua5.2-0
     
+  ffmpeg:
+    # WORKAROUND:
+    # Build from source because the ffmpeg package installs libraries as dependencies
+    # that conflict with the Gnome extension
+    plugin: autotools
+    source: https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz
+    autotools-configure-parameters:
+      # WORKAROUND: Install to /usr instead of /usr/local because it's not in search paths
+      - --prefix=/usr
+      - --disable-debug
+      - --disable-doc
+      - --disable-static
+      - --enable-avcodec
+      - --enable-gpl
+      - --enable-shared
+      - --disable-ffplay
+      - --disable-devices
+      - --enable-gnutls
+      - --enable-libmp3lame
+      - --enable-libvorbis
+      - --enable-avformat  
+      - --enable-libaom
+      - --enable-swresample
+      - --enable-libfdk-aac
+      - --enable-nonfree
+      - --enable-libass
+      - --enable-libbluray
+    build-packages:
+      - nasm
+      - libgnutls28-dev
+      - libfdk-aac-dev
+      - libmp3lame-dev
+      - libavformat-dev
+      - libvorbis-dev
+      - libavcodec-dev
+      - libaom-dev
+      - libswresample-dev
+      - libass-dev
+      - libbluray-dev
+    stage-packages:
+      - libmp3lame0
+      - libaom3
+      - libfdk-aac2
+      - libass9
+      - libbluray2
+      - libudfread0
+    stage:
+      - -usr/include
+
