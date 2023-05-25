@@ -1,1 +1,141 @@
+base: core20
+name: mpv-wayland
+version: '0.35.1-1'
+summary: mpv mediaplayer snap with a main focus on Wayland support
+description: |
+  Enable youtube suport:
 
+  snap install yt-dlp-core20  
+  snap connect mpv-wayland:plug20 yt-dlp-core20:yt-dlp-core20
+
+  ___
+  Allow access to /media, /run/media and /mnt:
+
+  snap connect mpv-wayland:removable-media
+
+  ___
+  Use KDE libs instead of Gnome:
+
+  snap install kde-frameworks-5-99-qt-5-15-7-core20  
+  snap disconnect mpv-wayland:gnome-3-38-2004  
+  snap connect mpv-wayland:gnome-3-38-2004 kde-frameworks-5-99-qt-5-15-7-core20:kde-frameworks-5-99-qt-5-15-core20
+icon: snap/gui/icon.svg
+grade: stable
+confinement: strict
+
+apps:
+  mpv-wayland:
+    adapter: none
+    environment:
+      HOME: $SNAP_USER_COMMON
+      PATH: $SNAP/usr/bin:$PATH
+      LD_LIBRARY_PATH: $SNAP/gui-lib/usr/lib:$SNAP/gui-lib/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$SNAP/gui-lib/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET
+      XKB_CONFIG_ROOT: $SNAP/gui-lib/usr/share/X11/xkb
+      __EGL_VENDOR_LIBRARY_DIRS: $SNAP/gui-lib/usr/share/glvnd/egl_vendor.d
+      LIBGL_DRIVERS_PATH: $SNAP/gui-lib/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri
+      LIBVA_DRIVERS_PATH: $SNAP/gui-lib/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/dri
+      FONTCONFIG_PATH: $SNAP/gui-lib/etc/fonts
+    command-chain:
+    - bin/mpv
+    command: usr/bin/mpv
+    plugs:
+    - audio-playback
+    - home
+    - network
+    - opengl
+    - removable-media
+    - wayland
+
+plugs:
+  gnome-3-38-2004:
+    interface: content
+    default-provider: gnome-3-38-2004
+    target: $SNAP/gui-lib
+  plug20:
+    interface: content
+    target: $SNAP/plug
+
+slots:
+  mpv-core20:
+    interface: content
+    read: [ / ]
+
+parts:
+  mpv-wayland:
+    source: https://github.com/mpv-player/mpv/archive/v0.35.1.tar.gz
+    source-type: tar
+    plugin: meson
+    meson-parameters:
+    - -Dprefix=/usr
+    - -Dbuildtype=release
+    - -Dbuild-date=false
+    - -Dlua=enabled
+    - -Dpulse=enabled
+    - -Ddrm=enabled
+    - -Degl=enabled -Degl-wayland=enabled
+    - -Dwayland=enabled
+    - -Dvaapi-wayland=enabled -Dvaapi-drm=disabled -Dvaapi-x11=disabled -Dvaapi-x-egl=disabled
+    - -Dx11=disabled
+    override-pull: |
+      snapcraftctl pull
+      sed '1224s/MPMIN(ver, 4)/MPMIN(ver, 3)/' -i video/out/wayland_common.c
+    build-packages:
+    - pkg-config
+    - libavfilter-dev
+    - libass-dev
+    - libpulse-dev
+    - libdrm-dev
+    - libwayland-dev
+    - wayland-protocols
+    - libxkbcommon-dev
+    - libegl1-mesa-dev
+    - libva-dev
+    - liblua5.2-dev
+    stage-packages:
+    - libavfilter7
+    - libva-wayland2
+    - liblua5.2-0
+    prime:
+    - -etc
+    - -usr/bin/fc-*
+    - -usr/bin/update-mime-database
+    - -**/gdk-pixbuf-2.0
+    - -**/liblua*-c++*
+    - -**/vdpau
+    - -usr/share
+# comm -12 <(find /snap/gnome-3-38-2004/current/ ! -type d -printf '%f\n' | sort -u) <(find /snap/mpv-wayland/current/ ! -type d -printf '%f\n' | sort -u)
+    - -**/libX*
+    - -**/libasound.so.2*
+    - -**/libcairo*
+    - -**/libdatrie.so.1*
+    - -**/libdrm.so.2*
+    - -**/libfontconfig.so.1*
+    - -**/libfreetype.so.6*
+    - -**/libfribidi.so.0*
+    - -**/libgdk*
+    - -**/libgomp.so.1*
+    - -**/libgraphite2.so.*
+    - -**/libharfbuzz.so.0
+    - -**/libicu*
+    - -**/libjbig.so.0
+    - -**/libjpeg.so.8*
+    - -**/libogg.so.0*
+    - -**/libopenjp2.so.*
+    - -**/libpango*
+    - -**/libpixman-1.so.0
+    - -**/libpng16.so.16*
+    - -**/librsvg-2.so.2*
+    - -**/libthai.so.0*
+    - -**/libtiff.so.5*
+    - -**/libva.so.2*
+    - -**/libvorbis*
+    - -**/libwayland-client.so.0*
+    - -**/libwebp.so.6*
+    - -**/libxcb*
+    - -**/libxml2.so.2*
+  mpv-wrapper:
+    source: snap/local/
+    source-type: local
+    plugin: dump
+    organize:
+      mpv: bin/
