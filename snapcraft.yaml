@@ -77,10 +77,11 @@ parts:
       - libcdio-paranoia-dev
       - libdvdnav-dev
       - libmujs-dev
-      - yt-dlp
+      - libsdl2-dev
       - libarchive-dev
       - build-essential
       - libjpeg-dev
+      - librubberband-dev
     stage-packages:
       - libva-wayland2
       - liblua5.2-0
